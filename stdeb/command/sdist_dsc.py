@@ -37,6 +37,7 @@ class sdist_dsc(Command):
         self.pycentral_backwards_compatibility = None
         self.workaround_548392 = None
         self.no_backwards_compatibility = None
+        self.xs_python_version = None
 
     def finalize_options(self):
         def str_to_bool(mystr):
@@ -153,6 +154,7 @@ class sdist_dsc(Command):
             install_requires = install_requires,
             debian_version = self.debian_version,
             workaround_548392=self.workaround_548392,
+            force_xs_python_version=self.xs_python_version,
             have_script_entry_points = have_script_entry_points,
             pycentral_backwards_compatibility=self.pycentral_backwards_compatibility,
             setup_requires = (), # XXX How do we get the setup_requires?

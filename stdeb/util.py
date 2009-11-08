@@ -72,6 +72,9 @@ stdeb_cmdline_opts = [
     ('no-backwards-compatibility',None,
      'If True, set --pycentral-backwards-compatibility=False and '
      '--workaround-548392=False. (Default=False).'),
+    ('xs-python-version=', None,
+     'Build only for specified python versions. Force write XS-Python-Version'
+     'to control file. (Default build for all installed pythons)'),
     ]
 
 stdeb_cmd_bool_opts = [
@@ -479,6 +482,7 @@ class DebianInfo:
                  workaround_548392=None,
                  have_script_entry_points = None,
                  pycentral_backwards_compatibility=None,
+                 force_xs_python_version=None,
                  ):
         if cfg_files is NotGiven: raise ValueError("cfg_files must be supplied")
         if module_name is NotGiven: raise ValueError(
@@ -658,7 +662,10 @@ class DebianInfo:
             else:
                 self.patch_level = 0
 
-        xs_python_version = parse_vals(cfg,module_name,'XS-Python-Version')
+        if force_xs_python_version:
+            xs_python_version = force_xs_python_version.split(',')
+        else:
+            xs_python_version = parse_vals(cfg,module_name,'XS-Python-Version')
         if have_script_entry_points and workaround_548392:
 
             # Trap cases that might trigger Debian bug #548392 and
@@ -671,7 +678,7 @@ class DebianInfo:
                 log.warn('working around Debian #548392, changing '
                          'XS-Python-Version: to \'current\'')
                 xs_python_version = ['current']
-            else:
+            elif not force_xs_python_version:
 
                 # The user specified a Python version. Check if s/he
                 # specified more than one. (Specifying a single

@@ -117,13 +117,13 @@ def recursive_hardlink(src,dst):
 
 def debianize_name(name):
     "make name acceptable as a Debian (binary) package name"
-    name = name.replace('_','')
+    name = name.replace('_','-')
     name = name.lower()
     return name
 
 def source_debianize_name(name):
     "make name acceptable as a Debian source package name"
-    name = name.replace('_','')
+    name = name.replace('_','-')
     name = name.replace('.','-')
     name = name.lower()
     return name
@@ -740,13 +740,13 @@ XB-Python-Version: ${python:Versions}
 
         provides = parse_vals(cfg,module_name,'Provides')
         if '.' in module_name:
-            provides.append("python-"+module_name.lower().replace('.', '-'))
+            provides.append("python-"+debianize_name(module_name))
         provides.insert(0, 'Provides: ${python:Provides}')
         self.package_stanza_extras += ', '.join( provides  )+'\n'
 
         replaces = parse_vals(cfg,module_name,'Replaces')
         if '.' in module_name:
-            provides.append("python-"+module_name.lower().replace('.', '-'))
+            provides.append("python-"+debianize_name(module_name))
         if len(replaces):
             self.package_stanza_extras += ('Replaces: ' +
                                               ', '.join( replaces  )+'\n')

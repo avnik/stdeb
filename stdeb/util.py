@@ -561,10 +561,19 @@ class DebianInfo:
 
         self.do_pycentral_removal_preinst = pycentral_backwards_compatibility
 
+        if force_xs_python_version:
+            xs_python_version = force_xs_python_version.split(',')
+        else:
+            xs_python_version = parse_vals(cfg,module_name,'XS-Python-Version')
+
         if has_ext_modules:
             self.architecture = 'any'
             depends.append('${shlibs:Depends}')
-            build_deps.append('python-all-dev')
+            if xs_python_version:
+                for each in xs_python_version:
+                    build_deps.append('python%s-dev' % each)
+            else:
+                build_deps.append('python-all-dev')
         else:
             self.architecture = 'all'
 
@@ -663,10 +672,6 @@ class DebianInfo:
             else:
                 self.patch_level = 0
 
-        if force_xs_python_version:
-            xs_python_version = force_xs_python_version.split(',')
-        else:
-            xs_python_version = parse_vals(cfg,module_name,'XS-Python-Version')
         if have_script_entry_points and workaround_548392:
 
             # Trap cases that might trigger Debian bug #548392 and
